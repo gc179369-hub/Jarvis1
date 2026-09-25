@@ -3,7 +3,7 @@
 // ============================================================
 
 export const GEMINI = {
-  apiKey: "AIzaSyCcOolfGoB8oTkMA2C4a1NUVZ-5Vot7EgE",
+  apiKey: "AQ.Ab8RN6JS9Wzvx2mACmU-Y9wzHhW4oojko1YMD7H8U-2ohVtSMg",
   wsHost: "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage",
   restModels: "https://generativelanguage.googleapis.com/v1beta/models",
   defaultModel: "models/gemini-2.5-flash-native-audio-preview-12-2025",
