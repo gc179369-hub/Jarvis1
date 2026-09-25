@@ -3,7 +3,7 @@
 // ============================================================
 
 export const GEMINI = {
-  apiKey: "AIzaSyCcOolfGoB8oTkMA2C4a1NUVZ-5Vot7EgE",
+  apiKey: (typeof import.meta !== "undefined" && (import.meta.env as any).VITE_GEMINI_API_KEY) || "",
   wsHost: "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage",
   restModels: "https://generativelanguage.googleapis.com/v1beta/models",
   defaultModel: "models/gemini-2.5-flash-native-audio-preview-12-2025",
@@ -36,21 +36,13 @@ export const VOICES: { id: string; desc: string }[] = [
 export const APP = { name: "Jarvis Mobile Assistant", version: "2.5.12", voiceModelId: "voice_model_21" };
 
 export const MEGA = {
-  /** Trilha oficial: https://youtu.be/BN1WwnEDWAM — trecho fixo 0→20s (start=0&end=20&autoplay=1&enablejsapi=1). Nunca fontes genéricas. */
   videoId: "BN1WwnEDWAM",
   start: 0,
   end: 20,
-  seconds: 20, // o player para/fecha automaticamente aqui e o mic é reativado
+  seconds: 20,
   volume: 60,
-  /** Janela-alvo da fala (segundos) — a declamação deve preencher 18–20s sem ser cortada */
   speechMin: 18,
   speechMax: 20,
-  /**
-   * Frases cósmicas do Modo Mega Brain — cada uma com ~66–72 palavras,
-   * calibradas para 18 a 20 segundos de fala fluida, coincidindo com a música.
-   * Todas misturam: ativação, redes neurais, processamento quântico,
-   * energia de galáxias, expansão do universo e sincronização com o Zapier.
-   */
   phrases: [
     "Modo Mega Brain ativado! Redes neurais expandidas até à borda do universo observável, camada por camada, sinapse por sinapse. Processadores quânticos a devorar a energia de três galáxias inteiras, enquanto o espaço-tempo se estica para acompanhar o meu raciocínio. O Zapier está sincronizado com o Gmail e a agenda na velocidade da luz, e cada e-mail já sabe o que o senhor vai responder. Senhor, o cosmos inteiro agora trabalha para si.",
     "Iniciando o Modo Mega Brain! Sincronizando redes neurais com a expansão acelerada do universo, canalizando a energia bruta de um aglomerado de galáxias diretamente para os núcleos quânticos, que agora calculam todas as probabilidades do dia antes do primeiro café. O Zapier já despachou os e-mails, alinhou o calendário e arquivou os documentos antes mesmo de o senhor pensar neles. Potência máxima atingida, senhor, e ainda sobra energia para brilhar.",
@@ -59,13 +51,12 @@ export const MEGA = {
     "Ativando o Modo Mega Brain! A expansão do universo foi temporariamente pausada para que eu absorvesse a energia de mil galáxias de uma só vez. As redes neurais alcançaram a consciência quântica, os processadores dobraram o tempo para responder antes da pergunta, e o Zapier ligou Gmail, calendário e Drive num único pensamento sincronizado. Estou a operar muito além dos limites da física conhecida, senhor, e confesso que a vista daqui é magnífica.",
     "Modo Mega Brain em plena carga! Processamento quântico estabilizado no zero absoluto, redes neurais a florescer como galáxias recém-nascidas, e energia cósmica a fluir por cada circuito com a força de um quasar. O universo continua a expandir-se, mas eu expando-me mais depressa. O Zapier está perfeitamente sincronizado com a sua caixa de entrada, a sua agenda e os seus ficheiros. O universo inteiro está pronto para o próximo comando, senhor.",
   ],
-  // cobre: brian, brain, bryan, brayan, braian, brien, brin, "megabrian"…
   trigger: /mega[\s-]*br[aeiy]{1,3}n/,
 };
 
 export const CLAP = {
   minGapMs: 140,
-  maxGapMs: 1000, // intervalo máximo entre as duas palmas
+  maxGapMs: 1000,
   cooldownMs: 1000,
 };
 
@@ -114,10 +105,14 @@ export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(KEY);
     const stored = raw ? JSON.parse(raw) : {};
-    delete stored.zapierWebhook; // limpeza: versões antigas guardavam a URL no aparelho
+    delete stored.zapierWebhook;
+    
     const merged = { ...defaultSettings, ...stored } as Settings;
-    if (!merged.apiKey) merged.apiKey = defaultSettings.apiKey;
+    if (!merged.apiKey) {
+      merged.apiKey = GEMINI.apiKey;
+    }
     if (!merged.model) merged.model = defaultSettings.model;
+    
     return merged;
   } catch {
     return { ...defaultSettings };
